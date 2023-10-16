@@ -130,6 +130,8 @@ typedef struct {
     uint16_t       last_kc;
     keypos_t       last_pos;
     report_mouse_t last_mouse;
+
+    bool reverse_scroll;
 } keyball_t;
 
 typedef enum {
@@ -164,6 +166,9 @@ bool keyball_get_scroll_mode(void);
 
 /// keyball_set_scroll_mode modify scroll mode.
 void keyball_set_scroll_mode(bool mode);
+
+/// keyball_set_reverse_scroll sets scroll direction.
+void keyball_set_reverse_scroll(bool mode);
 
 // TODO: document
 uint8_t keyball_get_scroll_div(void);

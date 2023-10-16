@@ -40,6 +40,8 @@ keyball_t keyball = {
 
     .scroll_mode = false,
     .scroll_div  = 0,
+
+    .reverse_scroll = false,
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -157,7 +159,7 @@ static void motion_to_mouse_move(keyball_motion_t *m, report_mouse_t *r, bool is
     m->y = 0;
 }
 
-static void motion_to_mouse_scroll(keyball_motion_t *m, report_mouse_t *r, bool is_left) {
+static void motion_to_mouse_scroll(keyball_motion_t *m, report_mouse_t *r, bool is_left, bool is_reverse) {
     // consume motion of trackball.
     uint8_t div = keyball_get_scroll_div() - 1;
     int16_t x   = m->x >> div;
@@ -167,8 +169,13 @@ static void motion_to_mouse_scroll(keyball_motion_t *m, report_mouse_t *r, bool 
 
     // apply to mouse report.
 #if KEYBALL_MODEL == 61 || KEYBALL_MODEL == 39 || KEYBALL_MODEL == 147 || KEYBALL_MODEL == 44
-    r->h = clip2int8(y);
-    r->v = -clip2int8(x);
+    if (is_reverse) {
+      r->h = -clip2int8(y);
+      r->v = clip2int8(x);
+    } else {
+      r->h = clip2int8(y);
+      r->v = -clip2int8(x);
+    }
     if (is_left) {
         r->h = -r->h;
         r->v = -r->v;
@@ -195,9 +202,9 @@ static void motion_to_mouse_scroll(keyball_motion_t *m, report_mouse_t *r, bool 
 #endif
 }
 
-static void motion_to_mouse(keyball_motion_t *m, report_mouse_t *r, bool is_left, bool as_scroll) {
+static void motion_to_mouse(keyball_motion_t *m, report_mouse_t *r, bool is_left, bool as_scroll, bool is_reverse) {
     if (as_scroll) {
-        motion_to_mouse_scroll(m, r, is_left);
+        motion_to_mouse_scroll(m, r, is_left, is_reverse);
     } else {
         motion_to_mouse_move(m, r, is_left);
     }
@@ -238,8 +245,8 @@ report_mouse_t pointing_device_driver_get_report(report_mouse_t rep) {
     // report mouse event, if keyboard is primary.
     if (is_keyboard_master() && should_report()) {
         // modify mouse report by PMW3360 motion.
-        motion_to_mouse(&keyball.this_motion, &rep, is_keyboard_left(), keyball.scroll_mode);
-        motion_to_mouse(&keyball.that_motion, &rep, !is_keyboard_left(), keyball.scroll_mode ^ keyball.this_have_ball);
+        motion_to_mouse(&keyball.this_motion, &rep, is_keyboard_left(), keyball.scroll_mode, keyball.reverse_scroll);
+        motion_to_mouse(&keyball.that_motion, &rep, !is_keyboard_left(), keyball.scroll_mode ^ keyball.this_have_ball, keyball.reverse_scroll);
         // store mouse report for OLED.
         keyball.last_mouse = rep;
     }
@@ -436,6 +443,10 @@ void keyball_set_scroll_mode(bool mode) {
         keyball.scroll_mode_changed = timer_read32();
     }
     keyball.scroll_mode = mode;
+}
+
+void keyball_set_reverse_scroll(bool mode) {
+    keyball.reverse_scroll = mode;
 }
 
 uint8_t keyball_get_scroll_div(void) {
