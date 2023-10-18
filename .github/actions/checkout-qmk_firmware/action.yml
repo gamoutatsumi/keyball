@@ -1,6 +1,10 @@
 name: 'Checkout QMK firmware'
 
 inputs:
+  version:
+    default: '0.22.3'
+    type: string
+    required: false
   path:
     default: '__qmk__'
     type: string
@@ -14,8 +18,9 @@ runs:
     uses: actions/checkout@v4
     with:
       path: ${{ inputs.path }}
-      repository: gamoutatsumi/qmk_firmware
+      repository: qmk/qmk_firmware
       submodules: recursive
+      ref: ${{ inputs.version }}
 
   - name: Setup QMK
     shell: bash

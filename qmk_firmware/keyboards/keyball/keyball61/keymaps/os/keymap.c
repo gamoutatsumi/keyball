@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "matrix.h"
 #include QMK_KEYBOARD_H
-#include "usb_host_os_identifier.h"
+#include "os_detection.h"
 
 #include "quantum.h"
 
@@ -65,9 +65,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 void matrix_scan_user(void) {
-    OS_TYPE os = get_usb_host_os_type();
+    os_variant_t os = detected_host_os()
     switch (os) {
-    case OS_TYPE_MAC:
+    case OS_MACOS:
       keyball_set_reverse_scroll(true);
       break;
     default:
