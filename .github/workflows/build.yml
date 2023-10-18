@@ -24,9 +24,7 @@ on:
   workflow_call: {}
 
 jobs:
-
   build:
-
     strategy:
       matrix:
         keyboard: [ keyball39, keyball44, keyball61, keyball46, one47 ]
