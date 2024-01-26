@@ -64,11 +64,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 
-void matrix_scan_user(void) {
-    os_variant_t os = detected_host_os();
-    switch (os) {
+void keyboard_post_init_user(void) {
+    wait_ms(400);
+    switch (detected_host_os()) {
     case OS_MACOS:
       keyball_set_reverse_scroll(true);
+
       break;
     default:
       keyball_set_reverse_scroll(false);
