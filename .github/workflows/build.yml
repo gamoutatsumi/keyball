@@ -43,6 +43,8 @@ jobs:
 
     - name: Checkout qmk_firmware
       uses: ./.github/actions/checkout-qmk_firmware
+      with:
+        version: '0.24.4'
 
     - name: Install a link to own source
       run: ln -s $(pwd)/qmk_firmware/keyboards/keyball __qmk__/keyboards/keyball
