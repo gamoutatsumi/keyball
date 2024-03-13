@@ -33,8 +33,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#    define RGBLIGHT_EFFECT_TWINKLE
 #endif
 
-#ifdef SPLIT_USB_DETECT
-# undef SPLIT_USB_DETECT
-#endif
-
 #define KEYBALL_SCROLLSNAP_ENABLE 0
